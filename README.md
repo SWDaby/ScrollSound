@@ -23,6 +23,7 @@ ScrollSound是一个实现在任务栏用滚轮控制音量的小工具。一个
 # 截图
 托盘菜单：<br>
 ![](./snipaste.png)<br>
+![](./Animation.gif)<br>
 
 # 已知问题：
 🔴多屏会有bug。(未解决❌)<br>
