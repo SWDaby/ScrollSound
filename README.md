@@ -9,6 +9,7 @@ ScrollSound是一个实现在任务栏用滚轮控制音量的小工具。一个
 # 相关链接：
 **下载：**<br>
 [Github](https://github.com/SWDaby/ScrollSound/releases/latest)<br>
+[Gitee](https://gitee.com/swdaby/ScrollSound/releases/)<br>
 [阿里云盘](https://www.aliyundrive.com/s/TBGXFokBRB3) 提取码：`bg1m`<br>
 
 **依赖环境：**<br>
