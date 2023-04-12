@@ -361,5 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/新建文件夹/ScrollSound_V1.22_x64.exe
-/新建文件夹/ScrollSound_V1.22_x86.exe
+/新建文件夹/ScrollSound*.exe
+/ScrollSound/setting.ini
+/.gitignore
