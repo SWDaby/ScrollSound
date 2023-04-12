@@ -14,8 +14,8 @@
 
 // 全局变量:
 HINSTANCE hInst;                                // 当前实例
-WCHAR szTitle[MAX_LOADSTRING];                  // 标题栏文本
-WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
+TCHAR szTitle[MAX_LOADSTRING];                  // 标题栏文本
+TCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
 AutoRunning aR;                                 // 开机自启对象
 HWND hWnd;
 NOTIFYICONDATA nid ;
@@ -49,7 +49,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_SCROLLSOUND, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
-    
+ 
  
     if (!InitInstance (hInstance, nCmdShow))
     {
@@ -214,6 +214,7 @@ void InitTray(HINSTANCE hInstance, HWND hWnd)
     
     subMenu = GetSubMenu(hMenu, 0); 
 
+    CMenuIcon::AddIconToMenuItem(subMenu, ID_ABOUT, FALSE, GetMenuIcon(IDI_TRAY_ICON));
     CMenuIcon::AddIconToMenuItem(subMenu, ID_APP_EXIT, FALSE, GetMenuIcon(IDI_EXIT_ICON));
 
    
@@ -245,8 +246,8 @@ void TrayMenuMessage(int MessageID) {
             
         }
         CheckMenuItem(subMenu, ID_AUTO_RUNNING, (aR.IsAutoRunning() ? MF_CHECKED : MF_UNCHECKED));
-        
         break;
+
     case ID_ADMIN:
         if (IsSettingAdmin()) {
             WritePrivateProfileString(SECTION_NAME, KEY_NAME, L"0", SETTING_PATH);
@@ -264,6 +265,14 @@ void TrayMenuMessage(int MessageID) {
            
         }
         break;
+
+
+    case ID_ABOUT:
+        ShellExecute(NULL, _T("open"), L"https://github.com/SWDaby/ScrollSound", NULL, NULL, SW_SHOW);
+        break;
+
+
+
     default:
         break;
     }

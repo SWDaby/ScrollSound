@@ -45,8 +45,9 @@ LRESULT CALLBACK MouseProc(
             bool down = false;
 
             WCHAR winclassname[100];
-            p.x = info->pt.x / scale;
-            p.y = info->pt.y / scale;
+            GetCursorPos(&p);
+            //p.x = info->pt.x / scale;
+            //p.y = info->pt.y / scale;
             WindowHwnd = WindowFromPoint(p);
             GetClassName(WindowHwnd, winclassname, 100);
             //printf("%d,%d\n", info->pt.x, info->pt.y);
@@ -85,8 +86,8 @@ void SetMouseHook(DWORD threadId)
 {
     // hook自身进程中的线程
     if (cwvh.IsWindows10())  wcscpy_s(task_bar_flag, L"MSTaskListWClass");
-    if (cwvh.IsWindows11OrLater())  wcscpy_s(task_bar_flag, L"ReBarWindow32");
-
+    if (cwvh.IsWindows11_21H2())  wcscpy_s(task_bar_flag, L"ReBarWindow32");
+    if (cwvh.IsWindows11_22H2())  wcscpy_s(task_bar_flag, L"Shell_TrayWnd");
     mouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseProc, NULL, threadId);
 }
 

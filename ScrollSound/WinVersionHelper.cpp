@@ -42,6 +42,22 @@ bool CWinVersionHelper::IsWindows11OrLater() const
 	else return false;
 }
 
+bool CWinVersionHelper::IsWindows11_21H2() const
+{
+	
+	if (m_major_version == 10 && m_minor_version == 0 && m_build_number == 22000)
+		return true;
+	else return false;
+}
+
+bool CWinVersionHelper::IsWindows11_22H2() const
+{
+
+	if (m_major_version == 10 && m_minor_version == 0 && m_build_number == 22621)
+		return true;
+	else return false;
+}
+
 bool CWinVersionHelper::IsWindows10FallCreatorOrLater() const
 {
 	if (m_major_version > 10)
