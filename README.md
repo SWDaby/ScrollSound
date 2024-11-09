@@ -5,7 +5,7 @@
 [![GitHub release](https://img.shields.io/github/release/SWDaby/ScrollSound.svg?style=flat-square)](https://github.com/SWDaby/ScrollSound/releases/latest)
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/swdaby/scrollsound/total)<br>
 
-ExecuteScrollSound是一个实现在任务栏用滚轮控制音量的小工具。一个看似鸡肋用了却离不开的小功能。<br>
+ScrollSound是一个实现在任务栏用滚轮控制音量的小工具。一个看似鸡肋用了却离不开的小功能。<br>
 目前支持win10、win11。<br>
 
 
