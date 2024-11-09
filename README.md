@@ -2,9 +2,13 @@
 # ScrollSound 简介
 [![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/SWDaby/ScrollSound.svg?style=flat-square)](https://github.com/SWDaby/ScrollSound/releases/latest)<br>
-ScrollSound是一个实现在任务栏用滚轮控制音量的小工具。一个看似鸡肋用了却离不开的小功能。<br>
+[![GitHub release](https://img.shields.io/github/release/SWDaby/ScrollSound.svg?style=flat-square)](https://github.com/SWDaby/ScrollSound/releases/latest)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/swdaby/scrollsound/total)<br>
+
+ExecuteScrollSound是一个实现在任务栏用滚轮控制音量的小工具。一个看似鸡肋用了却离不开的小功能。<br>
 目前支持win10、win11。<br>
+
+
 
 # 相关链接：
 **下载：**<br>
@@ -29,5 +33,4 @@ ScrollSound是一个实现在任务栏用滚轮控制音量的小工具。一个
 # 已知问题：
 🔴Win11多屏不能使用。(未解决❌)<br>
 🔴不能降权，需重启应用才能降权。(不影响使用，未解决❌)<br>
-
 
