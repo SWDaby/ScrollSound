@@ -117,6 +117,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -168,6 +172,7 @@
     <ClInclude Include="AutoRunning.h" />
     <ClInclude Include="Hook.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="MonitorHelper.h" />
     <ClInclude Include="Privilege.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -178,6 +183,7 @@
   <ItemGroup>
     <ClCompile Include="AutoRunning.cpp" />
     <ClCompile Include="Hook.cpp" />
+    <ClCompile Include="MonitorHelper.cpp" />
     <ClCompile Include="Privilege.cpp" />
     <ClCompile Include="WIC.cpp" />
     <ClCompile Include="ScrollSound.cpp">

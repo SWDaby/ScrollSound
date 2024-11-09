@@ -26,10 +26,12 @@ CWinVersionHelper::CWinVersionHelper()
    
 }
 
-
 CWinVersionHelper::~CWinVersionHelper()
 {
 }
+
+//Windows 11 的发布周期没有包含“XXH1”更新，所有主要更新都使用“H2”命名
+//https://zh.wikipedia.org/wiki/Windows_11%E7%89%88%E6%9C%AC%E5%8E%86%E5%8F%B2
 
 bool CWinVersionHelper::IsWindows11OrLater() const
 {
@@ -58,6 +60,18 @@ bool CWinVersionHelper::IsWindows11_22H2() const
 	else return false;
 }
 
+bool CWinVersionHelper::IsWindows11_22H2OrLater() const
+{
+
+	if (m_major_version == 10 && m_minor_version == 0 && m_build_number >= 22621)
+		return true;
+	else return false;
+}
+
+
+//==================================== = Windows10=====================================
+//https://zh.wikipedia.org/wiki/Windows_10%E7%89%88%E6%9C%AC%E5%8E%86%E5%8F%B2
+
 bool CWinVersionHelper::IsWindows10FallCreatorOrLater() const
 {
 	if (m_major_version > 10)
@@ -69,11 +83,31 @@ bool CWinVersionHelper::IsWindows10FallCreatorOrLater() const
 	else return false;
 }
 
+
+
+bool CWinVersionHelper::IsWindows10OrLater() const
+{
+    return m_major_version >= 10;
+}
+
+
+bool CWinVersionHelper::IsWindows10() const
+{
+	if (m_major_version == 10 && m_minor_version == 0 && m_build_number <= 21390)
+		return true;
+	else return false;
+	
+}
+
+//==================================== = Windows7=====================================
+
 bool CWinVersionHelper::IsWindows7() const
 {
 	return (m_major_version == 6 && m_minor_version == 1);
 }
 
+
+//==================================== = Windows8=====================================
 bool CWinVersionHelper::IsWindows8Or8point1() const
 {
 	return (m_major_version == 6 && m_minor_version > 1);
@@ -81,22 +115,9 @@ bool CWinVersionHelper::IsWindows8Or8point1() const
 
 bool CWinVersionHelper::IsWindows8OrLater() const
 {
-    if (m_major_version > 6)
-        return true;
-    else if (m_major_version == 6 && m_minor_version >= 2)
-        return true;
-    else return false;
-}
-
-bool CWinVersionHelper::IsWindows10OrLater() const
-{
-    return m_major_version >= 10;
-}
-
-bool CWinVersionHelper::IsWindows10() const
-{
-	if (m_major_version == 10 && m_minor_version == 0 && m_build_number <= 21390)//2021/06/15  https://zh.wikipedia.org/wiki/Windows_10%E7%89%88%E6%9C%AC%E5%8E%86%E5%8F%B2
+	if (m_major_version > 6)
+		return true;
+	else if (m_major_version == 6 && m_minor_version >= 2)
 		return true;
 	else return false;
-	
 }
