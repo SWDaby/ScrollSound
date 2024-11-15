@@ -10,7 +10,6 @@
 #include "Privilege.h"
 
 #define MAX_LOADSTRING 100
-#define UNICODE
 
 // 全局变量:
 HINSTANCE hInst;                                // 当前实例
@@ -62,7 +61,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	MSG msg;
 
-
+	//开始Hook
+	Sleep(2000);
 	SetMouseHook(0);
 	
 
@@ -203,6 +203,7 @@ void TrayMenuMessage(int MessageID) {
 	{
 	case ID_APP_EXIT:
 		Shell_NotifyIcon(NIM_DELETE, &nid);
+		MoveMouseHook();
 		PostQuitMessage(0);
 		break;
 
@@ -223,11 +224,11 @@ void TrayMenuMessage(int MessageID) {
 
 	case ID_ADMIN:
 		if (IsSettingAdmin()) {
-			WritePrivateProfileString(SECTION_NAME, KEY_NAME, L"0", SETTING_PATH);
+			WritePrivateProfileString(SECTION_NAME, KEY_NAME, _T("0"), SETTING_PATH);
 			CheckMenuItem(subMenu, ID_ADMIN, MF_UNCHECKED);
 		}
 		else {
-			WritePrivateProfileString(SECTION_NAME, KEY_NAME, L"1", SETTING_PATH);
+			WritePrivateProfileString(SECTION_NAME, KEY_NAME, _T("1"), SETTING_PATH);
 			CheckMenuItem(subMenu, ID_ADMIN, MF_CHECKED);
 			if (!IsAdmin()) {
 				adminrun();
@@ -240,7 +241,7 @@ void TrayMenuMessage(int MessageID) {
 
 
 	case ID_ABOUT:
-		ShellExecute(NULL, _T("open"), L"https://github.com/SWDaby/ScrollSound", NULL, NULL, SW_SHOW);
+		ShellExecute(NULL, _T("open"), _T("https://github.com/SWDaby/ScrollSound"), NULL, NULL, SW_SHOW);
 		break;
 
 	default:

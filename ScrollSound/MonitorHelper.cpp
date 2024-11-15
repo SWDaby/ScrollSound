@@ -3,7 +3,7 @@
 double MonitorHelper::GetScale() const
 {
     
-    // 获取窗口当前显示的监视器
+   // 获取窗口当前显示的监视器
    // 使用桌面的句柄.
    //HWND hWnd = GetDesktopWindow();
     HMONITOR hMonitor = MonitorFromWindow(NULL, MONITOR_DEFAULTTONEAREST);

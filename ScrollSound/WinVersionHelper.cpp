@@ -6,7 +6,7 @@ CWinVersionHelper::CWinVersionHelper()
 {
 	DWORD dwMajorVer{}, dwMinorVer{}, dwBuildNumber{};
 	HMODULE hModNtdll{};
-	if (hModNtdll = ::LoadLibraryW(L"ntdll.dll"))
+	if (hModNtdll = ::LoadLibrary(_T("ntdll.dll")))
 	{
 		typedef void (WINAPI *pfRTLGETNTVERSIONNUMBERS)(DWORD*, DWORD*, DWORD*);
 		pfRTLGETNTVERSIONNUMBERS pfRtlGetNtVersionNumbers;

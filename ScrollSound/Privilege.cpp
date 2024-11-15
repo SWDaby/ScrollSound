@@ -1,8 +1,6 @@
 #include "Privilege.h"
 
 
-
-
 //获取exe路径 
 wstring GetExePath()
 {
@@ -19,24 +17,24 @@ void adminrun()
 {
     SHELLEXECUTEINFO sei = { sizeof(SHELLEXECUTEINFO) };
     //请求提高权限
-    sei.lpVerb = TEXT("runas");
+    sei.lpVerb = _T("runas");
     //需要提升权限的应用程序
 
     wstring exePath(GetExePath());
-    sei.lpFile = exePath.c_str(); //TEXT("D:\\WindowsProject1 - 副本\\x64\\Debug\\WindowsProject1.exe");
+    sei.lpFile = exePath.c_str();
 
     //sei.nShow = SW_SHOWNORMAL;
 
     if (!ShellExecuteEx(&sei)) {
         DWORD dwStatus = GetLastError();
         if (dwStatus == ERROR_CANCELLED) {
-            ::MessageBoxA(NULL, "ShellExecute Cancel..", "caption", 0x00000002L);
+            ::MessageBox(NULL, _T("ShellExecute Cancel.."), _T("caption"), 0x00000002L);
             //printf("ShellExecute Cancel..");
         }
         else if (dwStatus == ERROR_FILE_NOT_FOUND)
         {
             
-            ::MessageBoxA(NULL, "File Not Found", "caption", 0x00000002L);
+            ::MessageBox(NULL, _T("File Not Found"), _T("caption"), 0x00000002L);
             //printf("File Not Found");
         }
     }
@@ -82,11 +80,8 @@ string GetExePathEXFileName()
 {
     char cModulePath[MAX_PATH] = { 0 };
     GetModuleFileNameA(NULL, cModulePath, MAX_PATH);
-    //printf("cModulePath:%s\n", cModulePath);
     PathRemoveFileSpecA(cModulePath);
     string strPath = cModulePath;
-    //std::wcout.imbue(std::locale("chs"));
-    //wcout << strPath << "\n" << endl;//wcout 不能直接显示中文
     return strPath;
 }
 

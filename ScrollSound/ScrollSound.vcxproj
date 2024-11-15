@@ -118,8 +118,7 @@
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>editbin /SUBSYSTEM:CONSOLE "$(OUTDIR)\$(ProjectName).exe"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -160,8 +159,7 @@
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>editbin /SUBSYSTEM:CONSOLE "$(OUTDIR)\$(ProjectName).exe"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>

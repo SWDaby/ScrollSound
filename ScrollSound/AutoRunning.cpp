@@ -3,7 +3,6 @@
 
 
 // 键：计算机\HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
-//#define APP_NAME "WindowsProject1"
 AutoRunning::AutoRunning()
 {
     GetModuleFileName(NULL, strExeFullDir, MAX_PATH);
@@ -49,7 +48,7 @@ void AutoRunning:: CanclePowerOn()
 
 bool AutoRunning:: IsAutoRunning()
 {
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), 0, KEY_ALL_ACCESS, &hKey) == ERROR_SUCCESS) ///打开启动项       
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), 0, KEY_ALL_ACCESS, &hKey) == ERROR_SUCCESS) //打开启动项       
    {
 
         TCHAR strDir[MAX_PATH] = {};
