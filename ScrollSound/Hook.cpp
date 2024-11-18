@@ -49,21 +49,12 @@ LRESULT CALLBACK MouseProc(
 		//解决和其他的全局钩子冲突,如：会和wgesture冲突，触发两次WM_MBUTTONDOWN
 		mButtonDownInfo = reinterpret_cast<MSLLHOOKSTRUCT*>(lParam);
 		if (mButtonDownInfo) {
-			std::cout << "flags: " << mButtonDownInfo->flags << std::endl;
-			std::cout << "dwExtraInfo: " << mButtonDownInfo->dwExtraInfo << std::endl;
+			//std::cout << "flags: " << mButtonDownInfo->flags << std::endl;
+			//std::cout << "dwExtraInfo: " << mButtonDownInfo->dwExtraInfo << std::endl;
 			if (mButtonDownInfo->dwExtraInfo == 0 && _tcscmp(winClassName, taskBarClassName) == 0) {
-				//cout << "WM_MBUTTONDOWN：" << winClassName << endl;
 				PostMessage(windowHwnd, WM_APPCOMMAND, 0, APPCOMMAND_VOLUME_MUTE << 16);
 				break;
-			}
-			//确保hook在hook链头
-			else if(mButtonDownInfo->dwExtraInfo != 0)
-			{
-				std::cout << "ooooo" <<std::endl;
-				//PostMessage(windowHwnd, WM_APPCOMMAND, 0, APPCOMMAND_VOLUME_MUTE << 16);
-				//MoveMouseHook();
-				//SetMouseHook(0);
-			}
+			}		
 		}
 
 	}
@@ -108,4 +99,9 @@ void SetMouseHook(DWORD threadId)
 void MoveMouseHook() {
 	UnhookWindowsHookEx(mouseHook);
 	mouseHook = NULL;
+}
+
+void ReHook() {
+	MoveMouseHook();
+	SetMouseHook(0);
 }

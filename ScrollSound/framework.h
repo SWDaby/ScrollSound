@@ -24,7 +24,7 @@
 using namespace std;
 
 
-#define APP_NAME L"ScrollSound"
+#define APP_NAME L"ScrollSound V1.24"
 #define SECTION_NAME L"setting"
 #define KEY_NAME  L"Administrator"
 #define SETTING_PATH  L".\\setting.ini"

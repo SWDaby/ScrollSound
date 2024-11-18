@@ -11,7 +11,7 @@
 #include "Privilege.h"
 
 #define MAX_LOADSTRING 100
-#define MAX_HOOKTIME 10 //运行后自动hook的最大次数
+#define MAX_HOOKTIME 10							//运行后自动hook的最大次数
 
 // 全局变量:
 HINSTANCE hInst;                                // 当前实例
@@ -20,12 +20,12 @@ TCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
 AutoRunning aR;                                 // 开机自启对象
 HWND hWnd;
 NOTIFYICONDATA nid;
-HMENU hMenu, subMenu;
+HMENU hMenu, subMenu;							//托盘菜单
 POINT pt;
 INT menuItemId;
 
 int hookTime=0;									//hook次数
-bool isPause = TRUE;
+bool isPause = TRUE;							//
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -36,7 +36,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	if (IsSettingAdmin() && !IsAdmin()) {
 		adminrun();
 		return FALSE;
-
 	}
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -63,8 +62,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//目的是为让MousHOOK保持在HOOK链的链头，以避免和其他软件冲突。
 	UINT_PTR timerId = SetTimer(NULL, 0, 1000*60, TimerProc); // 非阻塞定时器
 	if (!timerId) {
-		std::cerr << "Failed to create timer." << std::endl;
-		return 1;
+		//std::cerr << "Failed to create timer." << std::endl;
 	}
 	
 
@@ -77,8 +75,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		
-		
 
 	}
 	return (int)msg.wParam;
@@ -129,7 +125,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		szWindowClass, szTitle, WS_POPUP, 0, 0, 0, 0, NULL, NULL, hInstance, nullptr);
 
 
-	if (!hWnd) return FALSE;
+	if (!hWnd) {
+		return FALSE;
+	}
 
 	// 初始化托盘和菜单
 	InitTray(hInstance, hWnd);
@@ -192,8 +190,6 @@ void InitTray(HINSTANCE hInstance, HWND hWnd)
 	CMenuIcon::AddIconToMenuItem(subMenu, ID_ABOUT, FALSE, GetMenuIcon(IDI_TRAY_ICON));
 	CMenuIcon::AddIconToMenuItem(subMenu, ID_APP_EXIT, FALSE, GetMenuIcon(IDI_EXIT_ICON));
 
-
-	//printf("开机自启：%s\n", (aR.IsAutoRunning() ? "TRUE" : "FALSE"));
 	CheckMenuItem(subMenu, ID_AUTO_RUNNING, (aR.IsAutoRunning() ? MF_CHECKED : MF_UNCHECKED));
 	CheckMenuItem(subMenu, ID_ADMIN, (IsSettingAdmin() ? MF_CHECKED : MF_UNCHECKED));
 	Shell_NotifyIcon(NIM_ADD, &nid);
@@ -212,14 +208,10 @@ void TrayMenuMessage(int MessageID) {
 	case ID_AUTO_RUNNING:
 		if (aR.IsAutoRunning()) {
 			aR.CanclePowerOn();
-			//printf("开机自启1：%s\n", (aR.IsAutoRunning() ? "TRUE" : "FALSE"));
-
 		}
 		else
 		{
 			aR.AutoStart();
-			//printf("开机自启2：%s\n", (aR.IsAutoRunning() ? "TRUE" : "FALSE"));
-
 		}
 		CheckMenuItem(subMenu, ID_AUTO_RUNNING, (aR.IsAutoRunning() ? MF_CHECKED : MF_UNCHECKED));
 		break;
@@ -237,42 +229,35 @@ void TrayMenuMessage(int MessageID) {
 				Shell_NotifyIcon(NIM_DELETE, &nid);
 				PostQuitMessage(0);
 			}
-
 		}
 		break;
-
 
 	case ID_ABOUT:
 		ShellExecute(NULL, _T("open"), _T("https://github.com/SWDaby/ScrollSound"), NULL, NULL, SW_SHOW);
 		break;
 
 	case ID_REHOOK:
-		cout << "Rehook" << endl;
-		MoveMouseHook();
-		SetMouseHook(0);
+		//cout << "ReHook" << endl;
+		ReHook();
 		MessageBoxTimeout(NULL, _T("HOOK 成功"), _T("REHOOK"), MB_ICONINFORMATION, 1000);
 		ModifyMenu(subMenu, ID_PAUSE, MF_BYCOMMAND | MF_STRING, ID_PAUSE, _T("暂停"));
 		isPause = TRUE;
 		break;
+
 	case ID_PAUSE:
 		if (isPause) {
 			MoveMouseHook();
-			cout << "MoveMouseHook" << endl;
+			//cout << "MoveMouseHook" << endl;
 			ModifyMenu(subMenu, ID_PAUSE, MF_BYCOMMAND | MF_STRING, ID_PAUSE, _T("继续"));
 			isPause = FALSE;
 		}
 		else
 		{
 			SetMouseHook(0);
-			cout << "SetMouseHook" << endl;
+			//cout << "SetMouseHook" << endl;
 			ModifyMenu(subMenu, ID_PAUSE, MF_BYCOMMAND | MF_STRING, ID_PAUSE, _T("暂停"));
 			isPause = TRUE;
-
 		}
-		
-		break;
-
-	default:
 		break;
 	}
 
@@ -280,13 +265,11 @@ void TrayMenuMessage(int MessageID) {
 
 
 
-
+//定时器回调
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
-	std::cout << "Timer triggered at " << dwTime << " ms!" << std::endl;
+	//std::cout << "Timer triggered at " << dwTime << " ms!" << std::endl;
 	if (isPause) {
-		MoveMouseHook();
-		SetMouseHook(0);
-		cout << "进来" << endl;
+		ReHook();
 	}
 	hookTime++;
 	if (hookTime == MAX_HOOKTIME) {
