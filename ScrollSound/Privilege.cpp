@@ -28,13 +28,13 @@ void adminrun()
     if (!ShellExecuteEx(&sei)) {
         DWORD dwStatus = GetLastError();
         if (dwStatus == ERROR_CANCELLED) {
-            ::MessageBox(NULL, _T("ShellExecute Cancel.."), _T("caption"), 0x00000002L);
+            ::MessageBox(NULL, _T("ShellExecute Cancel.."), _T("ERROR"), 0x00000002L);
             //printf("ShellExecute Cancel..");
         }
         else if (dwStatus == ERROR_FILE_NOT_FOUND)
         {
             
-            ::MessageBox(NULL, _T("File Not Found"), _T("caption"), 0x00000002L);
+            ::MessageBox(NULL, _T("File Not Found"), _T("ERROR"), 0x00000002L);
             //printf("File Not Found");
         }
     }
@@ -69,8 +69,8 @@ bool IsSettingAdmin()
     int value = GetPrivateProfileInt(SECTION_NAME,KEY_NAME, 0, SETTING_PATH);
     
 
-    if (value != 1) return false;
-    else return true;
+    if (value == 1) return true;
+    else return false;
    
 
 }

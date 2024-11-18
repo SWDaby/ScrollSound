@@ -7,9 +7,11 @@
 #include "WIC.h"
 #include "AutoRunning.h"
 #include "WinVersionHelper.h"
+#include <thread>
 #include "Privilege.h"
 
 #define MAX_LOADSTRING 100
+#define MAX_HOOKTIME 10 //运行后自动hook的最大次数
 
 // 全局变量:
 HINSTANCE hInst;                                // 当前实例
@@ -22,15 +24,8 @@ HMENU hMenu, subMenu;
 POINT pt;
 INT menuItemId;
 
-
-
-// 函数声明:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-
-void TrayMenuMessage(int);
-void InitTray(HINSTANCE hInstance, HWND hWnd);
+int hookTime=0;									//hook次数
+bool isPause = TRUE;
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -62,10 +57,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	MSG msg;
 
 	//开始Hook
-	Sleep(2000);
 	SetMouseHook(0);
-	
 
+	//设置定时器，一分钟执行一次hook，执行10次。
+	//目的是为让MousHOOK保持在HOOK链的链头，以避免和其他软件冲突。
+	UINT_PTR timerId = SetTimer(NULL, 0, 1000*60, TimerProc); // 非阻塞定时器
+	if (!timerId) {
+		std::cerr << "Failed to create timer." << std::endl;
+		return 1;
+	}
+	
 
 	// 主消息循环:
 	while (GetMessage(&msg, nullptr, 0, 0))
@@ -76,9 +77,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+		
+		
 
 	}
-
 	return (int)msg.wParam;
 }
 
@@ -244,8 +246,63 @@ void TrayMenuMessage(int MessageID) {
 		ShellExecute(NULL, _T("open"), _T("https://github.com/SWDaby/ScrollSound"), NULL, NULL, SW_SHOW);
 		break;
 
+	case ID_REHOOK:
+		cout << "Rehook" << endl;
+		MoveMouseHook();
+		SetMouseHook(0);
+		MessageBoxTimeout(NULL, _T("HOOK 成功"), _T("REHOOK"), MB_ICONINFORMATION, 1000);
+		ModifyMenu(subMenu, ID_PAUSE, MF_BYCOMMAND | MF_STRING, ID_PAUSE, _T("暂停"));
+		isPause = TRUE;
+		break;
+	case ID_PAUSE:
+		if (isPause) {
+			MoveMouseHook();
+			cout << "MoveMouseHook" << endl;
+			ModifyMenu(subMenu, ID_PAUSE, MF_BYCOMMAND | MF_STRING, ID_PAUSE, _T("继续"));
+			isPause = FALSE;
+		}
+		else
+		{
+			SetMouseHook(0);
+			cout << "SetMouseHook" << endl;
+			ModifyMenu(subMenu, ID_PAUSE, MF_BYCOMMAND | MF_STRING, ID_PAUSE, _T("暂停"));
+			isPause = TRUE;
+
+		}
+		
+		break;
+
 	default:
 		break;
 	}
 
+}
+
+
+
+
+void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
+	std::cout << "Timer triggered at " << dwTime << " ms!" << std::endl;
+	if (isPause) {
+		MoveMouseHook();
+		SetMouseHook(0);
+		cout << "进来" << endl;
+	}
+	hookTime++;
+	if (hookTime == MAX_HOOKTIME) {
+		KillTimer(NULL, idEvent);
+	}
+	
+}
+
+int MessageBoxTimeout(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, DWORD dwMilliseconds) {
+	std::thread([=]() {
+		std::this_thread::sleep_for(std::chrono::milliseconds(dwMilliseconds));
+		HWND hMsgBox = FindWindow(NULL, lpCaption);
+		if (hMsgBox) {
+			PostMessage(hMsgBox, WM_CLOSE, 0, 0);
+		}
+		}).detach();
+
+	return MessageBox(hWnd, lpText, lpCaption, uType);
 }
