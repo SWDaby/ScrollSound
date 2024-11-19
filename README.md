@@ -10,7 +10,7 @@
 
 
 
-## 🔗相关链接：
+## ✨相关链接：
 **下载：**<br>
 [Github](https://github.com/SWDaby/ScrollSound/releases/latest)<br>
 [Gitee](https://gitee.com/swdaby/ScrollSound/releases/)<br>
@@ -31,13 +31,20 @@
 
 为什么要用？为了优雅。
 
-## 🖼️截图
+## 截图
 
-托盘菜单：<br>
-![](./snipaste.png)<br>
-![](./Animation.gif)<br>
+托盘菜单：
+
+<div align=center><img src="./imgs/snipaste.png" ></div>
+
+![](./imgs/Animation.gif)
 
 ## 已知问题：
+
 🔴Win11多屏不能使用。(未解决❌)<br>
 🔴不能降权，需重启应用才能降权。(不影响使用，未解决❌)<br>
+
+## Buy Me A Coffee
+
+<div align=center><img src="./imgs/Reward.png" width="30%"></div>
 
