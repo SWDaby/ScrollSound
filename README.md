@@ -44,7 +44,5 @@
 🔴Win11多屏不能使用。(未解决❌)<br>
 🔴不能降权，需重启应用才能降权。(不影响使用，未解决❌)<br>
 
-## Buy Me A Coffee
-
-<div align=center><img src="./imgs/Reward.png" width="30%"></div>
+<div align=center><img src="./imgs/Reward.png"></div>
 
