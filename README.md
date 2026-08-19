@@ -16,12 +16,18 @@
 [Gitee](https://gitee.com/swdaby/ScrollSound/releases/)<br>
 [阿里云盘](https://www.aliyundrive.com/s/TBGXFokBRB3) 提取码：`bg1m`<br>
 
-**依赖环境：**<br>
-[最新支持的 Visual C++ 可再发行程序包下载 | Microsoft Docs](https://docs.microsoft.com/zh-CN/cpp/windows/latest-supported-vc-redist?view=msvc-170)<br>
-如果程序启动时提示找不到dll文件，请下载并安装Microsoft Visual C++ 运行环境。<br>
+**构建：**<br>
+Rust 移植版。需要 [Rust](https://www.rust-lang.org/) 工具链，构建命令：<br>
+```
+cargo build --release
+```
+产物在 `target\release\ScrollSound.exe`，单文件静态链接，**无需安装 Visual C++ 运行环境**。<br>
+（旧版 C++/MSVC 构建方式已移除，源码历史保留在 git 中。）<br>
+
+**调试：**`ScrollSound.exe --debug` 会在 exe 同目录生成 `scrollsound.log` 日志。
 
 
-本工具使用了TrafficMonitor项目里的一些类，点击围观[大佬](https://github.com/zhongyang219/TrafficMonitor)<br>
+原 C++ 版本参考了 TrafficMonitor 项目里的一些类，点击围观[大佬](https://github.com/zhongyang219/TrafficMonitor)（本次 Rust 移植从零重写，不再包含其代码）<br>
 
 本项目[图标资源](https://www.flaticon.com/)<br>
 
