@@ -11,6 +11,8 @@ pub mod elevate;
 #[cfg(windows)]
 pub mod hook;
 #[cfg(windows)]
+pub mod single_instance;
+#[cfg(windows)]
 pub mod volume;
 #[cfg(windows)]
 pub mod win_autostart;

@@ -18,10 +18,12 @@ use std::fs::File;
 use std::path::PathBuf;
 #[cfg(windows)]
 use std::sync::atomic::{AtomicBool, AtomicU32, AtomicUsize, Ordering};
+#[cfg(windows)]
+use std::time::Duration;
 
 #[cfg(windows)]
 use windows::Win32::UI::WindowsAndMessaging::{
-    DispatchMessageW, GetMessageW, KillTimer, MSG, SetTimer, TranslateMessage, WM_TIMER,
+    DispatchMessageW, GetMessageW, KillTimer, SetTimer, TranslateMessage, MSG, WM_TIMER,
 };
 
 use platform::hook;
@@ -60,24 +62,49 @@ fn win_main() {
     }
     tracing::info!("ScrollSound V1.24 starting");
 
+    // Single-instance lock. A relaunch child (`--elevated-relaunch`) briefly
+    // overlaps its exiting parent, so it waits for the mutex handoff; a plain
+    // duplicate launch exits immediately.
+    let relaunching = std::env::args().any(|a| a == platform::single_instance::RELAUNCH_ARG);
+    let _guard = if relaunching {
+        platform::single_instance::acquire_wait(Duration::from_secs(6))
+    } else {
+        platform::single_instance::acquire_now()
+    };
+    let Some(_guard) = _guard else {
+        tracing::info!("another instance is running; exiting");
+        return;
+    };
+
     // Adopt a legacy C++ setting.ini (CWD-relative) before reading the flag.
     platform::win_settings::migrate_legacy_setting();
 
     // Elevation gate (D7): admin flag set but not elevated → runas relaunch
-    // and exit before any UI.
+    // before any UI. A cancellation or failed relaunch (UAC declined, or the
+    // launched child dies at startup) must not leave the app unstartable:
+    // revert the flag and run unelevated instead of prompting at every start.
     if platform::win_settings::admin_enabled() && !platform::elevate::is_admin() {
-        tracing::info!("admin mode enabled and not elevated: relaunching");
-        if !platform::elevate::relaunch_elevated() {
-            tracing::error!("elevated relaunch failed or cancelled");
+        if platform::elevate::relaunch_elevated() {
+            tracing::info!("admin mode enabled and not elevated: relaunching");
+            return;
         }
-        return;
+        tracing::error!("elevated relaunch failed or cancelled — reverting admin flag");
+        if let Err(e) = platform::win_settings::set_admin(false) {
+            tracing::error!("admin flag revert failed: {e}");
+        }
     }
 
     // Version → taskbar class init (D2: filled once at startup).
     hook::init_taskbar_class();
     let class_name = hook::TASKBAR_CLASS
         .get()
-        .map(|c| String::from_utf16_lossy(c))
+        .map(|classes| {
+            classes
+                .iter()
+                .map(|c| String::from_utf16_lossy(c))
+                .collect::<Vec<_>>()
+                .join("/")
+        })
         .unwrap_or_else(|| "<none>".into());
     tracing::info!("taskbar class: {class_name}");
 

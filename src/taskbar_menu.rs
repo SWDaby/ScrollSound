@@ -38,9 +38,11 @@ thread_local! {
 
 /// Constructs tray + menu and installs them as the app state.
 pub fn init(autostart_enabled: bool, admin_enabled: bool) -> Result<(), String> {
-    let autostart_item = CheckMenuItem::with_id("autostart", "开机自启(&R)", true, autostart_enabled, None);
+    let autostart_item =
+        CheckMenuItem::with_id("autostart", "开机自启(&R)", true, autostart_enabled, None);
     let separator = PredefinedMenuItem::separator();
-    let admin_item = CheckMenuItem::with_id("admin", "管理员权限运行(&A)", true, admin_enabled, None);
+    let admin_item =
+        CheckMenuItem::with_id("admin", "管理员权限运行(&A)", true, admin_enabled, None);
     let pause_item = MenuItem::with_id("pause", "暂停", true, None);
     let rehook_item = MenuItem::with_id("rehook", "重新HOOK", true, None);
     let separator2 = PredefinedMenuItem::separator();
@@ -69,7 +71,9 @@ pub fn init(autostart_enabled: bool, admin_enabled: bool) -> Result<(), String> 
             tracing::warn!("Icon::from_resource failed: {resource_err}");
             let fallback = platform::win_settings::exe_dir().map(|d| d.join("scrollsound.ico"));
             match fallback {
-                Some(p) => Icon::from_path(p, None).map_err(|e| format!("icon load failed: {e}"))?,
+                Some(p) => {
+                    Icon::from_path(p, None).map_err(|e| format!("icon load failed: {e}"))?
+                }
                 None => return Err(format!("icon resource missing: {resource_err}")),
             }
         }
@@ -159,14 +163,18 @@ fn toggle_autostart() {
         Ok(()) => {
             let now_enabled = !enabled;
             with_app(|app| app.autostart_item.set_checked(now_enabled));
-            tracing::info!("autostart {}", if now_enabled { "enabled" } else { "disabled" });
+            tracing::info!(
+                "autostart {}",
+                if now_enabled { "enabled" } else { "disabled" }
+            );
         }
         Err(e) => tracing::error!("autostart toggle failed: {e}"),
     }
 }
 
-/// 管理员权限运行(&A): toggle the ini flag; enabling while not elevated
-/// relaunches elevated and exits this process.
+/// 管理员权限运行(&A): toggle the ini flag. Enabling while not elevated
+/// relaunches elevated and exits; disabling while elevated relaunches
+/// unelevated (privilege downgrade) and exits.
 fn toggle_admin() {
     let enabled = platform::win_settings::admin_enabled();
     let target = !enabled;
@@ -176,9 +184,40 @@ fn toggle_admin() {
     }
     with_app(|app| app.admin_item.set_checked(target));
     tracing::info!("admin mode {}", if target { "enabled" } else { "disabled" });
-    if target && !platform::elevate::is_admin() {
-        let _ = platform::elevate::relaunch_elevated();
-        request_exit();
+    if target {
+        if !platform::elevate::is_admin() {
+            if platform::elevate::relaunch_elevated() {
+                request_exit();
+            } else {
+                // UAC declined: revert the flag so the app keeps running
+                // unelevated instead of prompting again at every start.
+                tracing::error!("elevated relaunch declined — reverting admin flag");
+                if let Err(e) = platform::win_settings::set_admin(false) {
+                    tracing::error!("admin flag revert failed: {e}");
+                }
+                with_app(|app| app.admin_item.set_checked(false));
+            }
+        }
+        return;
+    }
+    // Disabling while still elevated: relaunch with a standard-user token so
+    // the downgrade takes effect immediately. On failure keep running — the
+    // flag is already off and a manual restart applies it then.
+    if platform::elevate::is_admin() {
+        if platform::elevate::relaunch_unelevated() {
+            request_exit();
+        } else {
+            let text = crate::platform::wide_cstr("降权失败：请退出后以普通权限重新运行");
+            let caption = crate::platform::wide_cstr("ScrollSound");
+            unsafe {
+                MessageBoxW(
+                    None,
+                    PCWSTR(text.as_ptr()),
+                    PCWSTR(caption.as_ptr()),
+                    MB_ICONERROR,
+                );
+            }
+        }
     }
 }
 

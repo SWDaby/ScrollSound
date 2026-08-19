@@ -11,15 +11,16 @@ use std::sync::{Mutex, OnceLock};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, POINT, WPARAM};
 use windows::Win32::UI::WindowsAndMessaging::{
     CallNextHookEx, GetClassNameW, GetCursorPos, SetWindowsHookExW, UnhookWindowsHookEx,
-    WindowFromPoint, MSLLHOOKSTRUCT, HHOOK, WH_MOUSE_LL, WM_MBUTTONDOWN, WM_MOUSEWHEEL,
+    WindowFromPoint, HHOOK, MSLLHOOKSTRUCT, WH_MOUSE_LL, WM_MBUTTONDOWN, WM_MOUSEWHEEL,
 };
 
 use crate::core::events::{resolve_event, MouseEvent};
 use crate::platform::volume::{VolumeController, WinVolumeController};
 use crate::platform::win_version;
 
-/// Taskbar window class for the running OS, filled once at startup.
-pub static TASKBAR_CLASS: OnceLock<Vec<u16>> = OnceLock::new();
+/// Taskbar window classes for the running OS, filled once at startup (one
+/// entry on Win10, primary+secondary on Win11 22H2+).
+pub static TASKBAR_CLASS: OnceLock<Vec<Vec<u16>>> = OnceLock::new();
 
 /// Pause flag (C++ `isPause`): `true` = hook active. Toggled by the 暂停/继续
 /// menu item and the re-hook action; the watchdog re-hooks only when active.
@@ -115,9 +116,9 @@ unsafe extern "system" fn mouse_proc(code: i32, wparam: WPARAM, lparam: LPARAM) 
     CallNextHookEx(None, code, wparam, lparam)
 }
 
-/// Whether the window's class equals the expected taskbar class.
-fn class_matches(hwnd: HWND, expected: Option<&Vec<u16>>) -> bool {
-    let Some(expected) = expected else {
+/// Whether the window's class equals any expected taskbar class.
+fn class_matches(hwnd: HWND, expected: Option<&Vec<Vec<u16>>>) -> bool {
+    let Some(classes) = expected else {
         return false;
     };
     if hwnd.0.is_null() {
@@ -129,7 +130,9 @@ fn class_matches(hwnd: HWND, expected: Option<&Vec<u16>>) -> bool {
         return false;
     }
     let len = len as usize;
-    len == expected.len() && buf[..len] == expected[..]
+    classes
+        .iter()
+        .any(|c| len == c.len() && buf[..len] == c[..])
 }
 
 /// Debug aid (trace-level only): the class of the window under the cursor.

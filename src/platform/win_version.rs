@@ -13,9 +13,9 @@ fn current() -> &'static OsVersion {
     VERSION.get_or_init(OsVersion::current)
 }
 
-/// The taskbar window class (UTF-16 code units) for the running OS, or `None`
-/// when the version is not one of the supported branches.
-pub fn taskbar_class() -> Option<Vec<u16>> {
+/// The taskbar window class set (UTF-16 code units) for the running OS, or
+/// `None` when the version is not one of the supported branches.
+pub fn taskbar_class() -> Option<Vec<Vec<u16>>> {
     let v = current();
     taskbar_class_for(v.major, v.minor, v.build)
 }
@@ -29,6 +29,9 @@ mod tests {
         // Version acquisition itself is untestable without FFI; assert the
         // wrapper is exactly the pure mapping applied to the current version.
         let v = current();
-        assert_eq!(taskbar_class(), taskbar_class_for(v.major, v.minor, v.build));
+        assert_eq!(
+            taskbar_class(),
+            taskbar_class_for(v.major, v.minor, v.build)
+        );
     }
 }
