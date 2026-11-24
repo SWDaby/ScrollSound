@@ -1,3 +1,9 @@
 // Stable ordinal for the app icon group; also the tray-icon ordinal
 // (tray_icon::Icon::from_resource(156, None)).
 156 ICON "scrollsound.ico"
+
+// 退出 menu-item icon (muda IconMenuItem), loaded via
+// tray_icon::menu::Icon::from_resource(157, None). The ordinal deliberately
+// stays above 156: Explorer uses the lowest RT_GROUP_ICON as the file icon,
+// so a lower id here would replace the application icon.
+157 ICON "exit.ico"

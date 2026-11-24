@@ -5,7 +5,7 @@
 use std::cell::RefCell;
 
 use tray_icon::menu::{
-    CheckMenuItem, IsMenuItem, Menu, MenuEvent, MenuId, MenuItem, PredefinedMenuItem,
+    CheckMenuItem, IconMenuItem, IsMenuItem, Menu, MenuEvent, MenuId, MenuItem, PredefinedMenuItem,
 };
 use tray_icon::{Icon, TrayIcon, TrayIconBuilder, TrayIconEvent};
 
@@ -46,8 +46,10 @@ pub fn init(autostart_enabled: bool, admin_enabled: bool) -> Result<(), String> 
     let pause_item = MenuItem::with_id("pause", "暂停", true, None);
     let rehook_item = MenuItem::with_id("rehook", "重新HOOK", true, None);
     let separator2 = PredefinedMenuItem::separator();
-    let about_item = MenuItem::with_id("about", "关于(&G)", true, None);
-    let exit_item = MenuItem::with_id("exit", "退出(&X)", true, None);
+    let about_item =
+        IconMenuItem::with_id("about", "关于(&G)", true, menu_icon(APP_ICON_ORDINAL), None);
+    let exit_item =
+        IconMenuItem::with_id("exit", "退出(&X)", true, menu_icon(EXIT_ICON_ORDINAL), None);
 
     let menu = Menu::new();
     let items: [&dyn IsMenuItem; 8] = [
@@ -102,6 +104,22 @@ pub fn init(autostart_enabled: bool, admin_enabled: bool) -> Result<(), String> 
 }
 
 const APP_ICON_ORDINAL: u16 = 156;
+/// 退出 item icon. Must stay above `APP_ICON_ORDINAL`: Explorer shows the
+/// lowest RT_GROUP_ICON as the executable's file icon.
+const EXIT_ICON_ORDINAL: u16 = 157;
+
+/// Loads a menu-item icon from the executable's embedded resources. A missing
+/// resource leaves the item icon-less instead of failing tray init (the
+/// original C++ code had the same "menu still works" behavior).
+fn menu_icon(ordinal: u16) -> Option<tray_icon::menu::Icon> {
+    match tray_icon::menu::Icon::from_resource(ordinal, None) {
+        Ok(icon) => Some(icon),
+        Err(e) => {
+            tracing::warn!("menu icon resource {ordinal} failed: {e}");
+            None
+        }
+    }
+}
 
 /// Drains both channels (design D2: `try_recv`, never blocking the pump).
 pub fn drain_events() {
