@@ -1,0 +1,3 @@
+// Stable ordinal for the app icon group; also the tray-icon ordinal
+// (tray_icon::Icon::from_resource(156, None)).
+156 ICON "scrollsound.ico"

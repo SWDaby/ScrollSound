@@ -365,3 +365,9 @@ FodyWeavers.xsd
 /发布/
 /ScrollSound/setting.ini
 /.gitignore
+
+
+
+/target/
+.*
+openspec
