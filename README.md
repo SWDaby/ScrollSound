@@ -21,8 +21,7 @@ Rust 移植版。需要 [Rust](https://www.rust-lang.org/) 工具链，构建命
 ```
 cargo build --release
 ```
-产物在 `target\release\ScrollSound.exe`，单文件静态链接，**无需安装 Visual C++ 运行环境**。<br>
-（旧版 C++/MSVC 构建方式已移除，源码历史保留在 git 中。）<br>
+产物在 `target\release\ScrollSound.exe`<br>
 
 **调试：**`ScrollSound.exe --debug` 会在 exe 同目录生成 `scrollsound.log` 日志。
 
@@ -45,10 +44,7 @@ cargo build --release
 
 ![](./imgs/Animation.gif)
 
-## 已知问题：
 
-🔴Win11多屏不能使用。(未解决❌)<br>
-🔴不能降权，需重启应用才能降权。(不影响使用，未解决❌)<br>
 
 <div align=center><img src="./imgs/Reward.png"></div>
 
